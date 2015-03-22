@@ -29,6 +29,7 @@ dependencies {
     compile 'org.springframework.boot:spring-boot-starter-actuator'
     compile 'org.springframework.boot:spring-boot-starter-cloud-connectors'
     compile 'org.springframework.boot:spring-boot-starter-web'
+    compile 'org.springframework.boot:spring-boot-starter-security'
     compile 'com.devbury:spring-boot-starter-threadscope:1.1.0'
     testCompile 'org.springframework.boot:spring-boot-starter-test'
 }
