@@ -1,0 +1,1 @@
+web: java $JAVA_OPTS -jar keepalive.jar --server.port=$PORT
