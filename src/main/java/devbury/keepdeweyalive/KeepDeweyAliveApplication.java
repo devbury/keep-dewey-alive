@@ -54,7 +54,7 @@ public class KeepDeweyAliveApplication {
         try {
             restTemplate.getForObject(url, String.class);
         } catch (Exception e) {
-            System.out.println("Could not check health " + e.toString());
+            // could not perform check
         }
     }
 
