@@ -5,11 +5,12 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,42 +19,42 @@ import java.util.concurrent.ConcurrentHashMap;
 @RestController
 public class KeepDeweyAliveApplication {
 
-    private static final long MIN_PING_INTERVAL = 10 * 60 * 1000;
+    private static final long MIN_HEALTH_CHECK_INTERVAL = 10 * 60 * 1000;
 
     @Autowired
     private TaskExecutor taskExecutor;
 
     private RestTemplate restTemplate = new RestTemplate();
 
-    private final Map<String, Long> lastPingByUrl = new ConcurrentHashMap<>();
+    private final Map<String, Long> lastHealthCheckByUrl = new ConcurrentHashMap<>();
 
     public static void main(String[] args) {
         SpringApplication.run(KeepDeweyAliveApplication.class, args);
     }
 
-    @RequestMapping("/ping")
-    public Response ping(HttpServletRequest httpServletRequest) {
-        String pingUrl = "http://" + httpServletRequest.getRemoteAddr() + "/health";
+    @RequestMapping(value = "/check-health-now", method = RequestMethod.POST)
+    public Response checkHealthNow(@RequestBody String baseUrl) {
+        String pingUrl = baseUrl + "/health";
 
         Response response = new Response();
-        response.setPingUrl(pingUrl);
+        response.setHealthUrl(pingUrl);
 
-        Long lastPing = lastPingByUrl.get(pingUrl);
-        if (lastPing == null || now() - lastPing > MIN_PING_INTERVAL) {
-            response.setMessage("pinging now");
-            taskExecutor.execute(() -> asyncPing(pingUrl));
+        Long lastPing = lastHealthCheckByUrl.get(pingUrl);
+        if (lastPing == null || now() - lastPing > MIN_HEALTH_CHECK_INTERVAL) {
+            response.setMessage("checking health now");
+            taskExecutor.execute(() -> asyncHealthCheck(pingUrl));
         } else {
-            response.setMessage("already pinged within 10 minutes");
+            response.setMessage("health already checked within the last 10 minutes");
         }
         return response;
     }
 
-    protected void asyncPing(String url) {
-        lastPingByUrl.put(url, now());
+    protected void asyncHealthCheck(String url) {
+        lastHealthCheckByUrl.put(url, now());
         try {
             restTemplate.getForObject(url, String.class);
         } catch (Exception e) {
-            System.out.println("Could not ping " + e.toString());
+            System.out.println("Could not check health " + e.toString());
         }
     }
 

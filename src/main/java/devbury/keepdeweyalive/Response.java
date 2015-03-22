@@ -2,15 +2,15 @@ package devbury.keepdeweyalive;
 
 public class Response {
 
-    private String pingUrl;
+    private String healthUrl;
     private String message;
 
-    public String getPingUrl() {
-        return pingUrl;
+    public String getHealthUrl() {
+        return healthUrl;
     }
 
-    public void setPingUrl(String pingUrl) {
-        this.pingUrl = pingUrl;
+    public void setHealthUrl(String healthUrl) {
+        this.healthUrl = healthUrl;
     }
 
     public String getMessage() {
