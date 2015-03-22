@@ -32,21 +32,21 @@ public class KeepDeweyAliveApplication {
         SpringApplication.run(KeepDeweyAliveApplication.class, args);
     }
 
-    @RequestMapping(value = "/check-health-now", method = RequestMethod.POST)
-    public Response checkHealthNow(@RequestBody String baseUrl) {
+    @RequestMapping(value = "/health-check", method = RequestMethod.POST)
+    public HealthCheck healthCheck(@RequestBody String baseUrl) {
         String healthCheckUrl = baseUrl + "/health";
 
-        Response response = new Response();
-        response.setHealthUrl(healthCheckUrl);
+        HealthCheck healthCheck = new HealthCheck();
+        healthCheck.setHealthCheckUrl(healthCheckUrl);
 
         Long lastHealthCheck = lastHealthCheckByUrl.get(healthCheckUrl);
         if (lastHealthCheck == null || now() - lastHealthCheck > MIN_HEALTH_CHECK_INTERVAL) {
-            response.setMessage("checking health now");
+            healthCheck.setMessage("checking health now");
             taskExecutor.execute(() -> asyncHealthCheck(healthCheckUrl));
         } else {
-            response.setMessage("health already checked within the last 10 minutes");
+            healthCheck.setMessage("health already checked within the last 10 minutes");
         }
-        return response;
+        return healthCheck;
     }
 
     protected void asyncHealthCheck(String url) {
