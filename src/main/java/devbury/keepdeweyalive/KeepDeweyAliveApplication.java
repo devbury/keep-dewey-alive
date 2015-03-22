@@ -34,15 +34,15 @@ public class KeepDeweyAliveApplication {
 
     @RequestMapping(value = "/check-health-now", method = RequestMethod.POST)
     public Response checkHealthNow(@RequestBody String baseUrl) {
-        String pingUrl = baseUrl + "/health";
+        String healthCheckUrl = baseUrl + "/health";
 
         Response response = new Response();
-        response.setHealthUrl(pingUrl);
+        response.setHealthUrl(healthCheckUrl);
 
-        Long lastPing = lastHealthCheckByUrl.get(pingUrl);
-        if (lastPing == null || now() - lastPing > MIN_HEALTH_CHECK_INTERVAL) {
+        Long lastHealthCheck = lastHealthCheckByUrl.get(healthCheckUrl);
+        if (lastHealthCheck == null || now() - lastHealthCheck > MIN_HEALTH_CHECK_INTERVAL) {
             response.setMessage("checking health now");
-            taskExecutor.execute(() -> asyncHealthCheck(pingUrl));
+            taskExecutor.execute(() -> asyncHealthCheck(healthCheckUrl));
         } else {
             response.setMessage("health already checked within the last 10 minutes");
         }
