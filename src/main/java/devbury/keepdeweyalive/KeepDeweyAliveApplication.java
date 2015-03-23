@@ -34,7 +34,7 @@ public class KeepDeweyAliveApplication {
 
     @RequestMapping(value = "/health-check", method = RequestMethod.POST)
     public HealthCheck healthCheck(@RequestBody String baseUrl) {
-        String healthCheckUrl = baseUrl + "/health";
+        String healthCheckUrl = baseUrl + "/management/health";
 
         HealthCheck healthCheck = new HealthCheck();
         healthCheck.setHealthCheckUrl(healthCheckUrl);

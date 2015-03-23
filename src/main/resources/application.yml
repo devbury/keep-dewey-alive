@@ -1,2 +1,9 @@
 security:
     ignored: health-check
+
+endpoints:
+    enabled: false
+    health:
+        enabled: true
+    metrics:
+        enabled: true
